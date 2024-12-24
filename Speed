@@ -1,0 +1,178 @@
+local Gui = Instance.new("ScreenGui")
+Gui.Name = "SpeedChanger"
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Parent = Gui
+Title.Position = UDim2.new(0.3, 0, 0, 0)
+Title.Size = UDim2.new(0.4, 0, 0.05, 0)
+Title.Text = "Speed Changer"
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.TextColor3 = Color3.fromRGB(0, 0, 0)
+Title.FontSize = Enum.FontSize.Size14
+
+-- Speed TextBox
+local SpeedTextBox = Instance.new("TextBox")
+SpeedTextBox.Parent = Gui
+SpeedTextBox.Position = UDim2.new(0.3, 0, 0.1, 0)
+SpeedTextBox.Size = UDim2.new(0.4, 0, 0.05, 0)
+SpeedTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SpeedTextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+SpeedTextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+SpeedTextBox.Text = "16" -- Default speed
+
+-- Default Speed TextBox
+local DefaultSpeedTextBox = Instance.new("TextBox")
+DefaultSpeedTextBox.Parent = Gui
+DefaultSpeedTextBox.Position = UDim2.new(0.3, 0, 0.17, 0)
+DefaultSpeedTextBox.Size = UDim2.new(0.4, 0, 0.05, 0)
+DefaultSpeedTextBox.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+DefaultSpeedTextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+DefaultSpeedTextBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+DefaultSpeedTextBox.Text = "16" -- Default speed
+
+-- Status Label
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Parent = Gui
+StatusLabel.Position = UDim2.new(0.01, 0, 0.9, 0)
+StatusLabel.Size = UDim2.new(0.1, 0, 0.05, 0)
+StatusLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+StatusLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+StatusLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+StatusLabel.Text = "OFF"
+
+-- On/Off Button
+local OnOffButton = Instance.new("TextButton")
+OnOffButton.Parent = Gui
+OnOffButton.Position = UDim2.new(0.3, 0, 0.27, 0)
+OnOffButton.Size = UDim2.new(0.2, 0, 0.05, 0)
+OnOffButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+OnOffButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+OnOffButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+OnOffButton.Text = "ON"
+local IsOn = false
+
+OnOffButton.MouseButton1Click:Connect(function()
+    IsOn = not IsOn
+    if IsOn then
+        OnOffButton.Text = "OFF"
+        StatusLabel.Text = "ON"
+    else
+        OnOffButton.Text = "ON"
+        StatusLabel.Text = "OFF"
+    end
+end)
+
+-- Reset Speed Button
+local ResetSpeedButton = Instance.new("TextButton")
+ResetSpeedButton.Parent = Gui
+ResetSpeedButton.Position = UDim2.new(0.55, 0, 0.27, 0)
+ResetSpeedButton.Size = UDim2.new(0.2, 0, 0.05, 0)
+ResetSpeedButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ResetSpeedButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+ResetSpeedButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+ResetSpeedButton.Text = "Reset"
+
+ResetSpeedButton.MouseButton1Click:Connect(function()
+    SpeedTextBox.Text = DefaultSpeedTextBox.Text
+end)
+
+-- Draggable Frame
+local Frame = Instance.new("Frame")
+Frame.Parent = Gui
+Frame.Position = UDim2.new(0.25, 0, 0.05, 0)
+Frame.Size = UDim2.new(0.5, 0, 0.4, 0) -- Increased height for two TextBoxes
+Frame.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+Frame.BorderSizePixel = 1
+Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+
+-- Make Frame Draggable
+local UserInputService = game:GetService("UserInputService")
+local dragToggle = false
+local dragStart = Vector2.new(0, 0)
+local startPos = Vector2.new(0, 0)
+
+Frame.MouseEnter:Connect(function()
+    Frame.Draggable = true
+end)
+
+Frame.MouseLeave:Connect(function()
+    Frame.Draggable = false
+end)
+
+UserInputService.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragToggle = true
+        dragStart = input.Position
+        startPos = Frame.Position
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragToggle = false
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement and dragToggle then
+        local delta = input.Position - dragStart
+        Frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
+end)
+
+-- Gui Minimizer
+local MinimizerButton = Instance.new("TextButton")
+MinimizerButton.Parent = Gui
+MinimizerButton.Position = UDim2.new(0.95, 0, 0.01, 0)
+MinimizerButton.Size = UDim2.new(0.05, 0, 0.05, 0)
+MinimizerButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MinimizerButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MinimizerButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+MinimizerButton.Text = "+"
+
+local IsMinimized = false
+
+MinimizerButton.MouseButton1Click:Connect(function()
+    IsMinimized = not IsMinimized
+    if IsMinimized then
+        MinimizerButton.Text = "-"
+        Frame.Visible = false
+        Title.Visible = false
+        SpeedTextBox.Visible = false
+        DefaultSpeedTextBox.Visible = false
+        OnOffButton.Visible = false
+        ResetSpeedButton.Visible = false
+        MinimizerButton.Size = UDim2.new(0.05, 0, 0.05, 0)
+    else
+        MinimizerButton.Text = "+"
+        Frame.Visible = true
+        Title.Visible = true
+        SpeedTextBox.Visible = true
+        DefaultSpeedTextBox.Visible = true
+        OnOffButton.Visible = true
+        ResetSpeedButton.Visible = true
+        MinimizerButton.Size = UDim2.new(0.05, 0, 0.05, 0)
+    end
+end)
+
+-- Player Speed Change
+game.Players.PlayerAdded:Connect(function(player)
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoid = character:WaitForChild("Humanoid")
+
+    local function updateSpeed()
+        if IsOn then
+            local newSpeed = tonumber(SpeedTextBox.Text)
+            if newSpeed then
+                humanoid.WalkSpeed = newSpeed
+            end
+        else
+            humanoid.WalkSpeed = tonumber(DefaultSpeedTextBox.Text)
+        end
+    end
+
+    updateSpeed()
+
+    SpeedTextBox.
